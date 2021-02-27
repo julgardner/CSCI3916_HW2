@@ -1,8 +1,9 @@
 var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
-var passport = require('passport')
-var db = require('./db')()
+var passport = require('passport');
+var authController = require('./auth');
+var db = require('./db')();
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
 
@@ -43,7 +44,7 @@ router.post('/signup', function(req, res) {
         };
 
         db.save(newUser);
-        res.json({success: true, msg: "Created new user."})
+        res.json({success: true, msg: "Created new user."});
     }
 });
 
@@ -51,19 +52,48 @@ router.post('/signin', function(req, res) {
     var user = db.findOne(req.body.username);
 
     if(!user) {
-        res.status(401).send({success: false, msg: "Authentication failed."})
+        res.status(401).send({success: false, msg: "Authentication failed."});
     }
     else {
-        if(req.body.password == user.password) {
+        if(req.body.password === user.password) {
             var userToken = {id: user.id, username: user.username};
             var token = jwt.sign(userToken, process.env.SECRET_KEY);
-            res.json({success: true, token: 'JWT ' + token})
+            res.json({success: true, token: 'JWT ' + token});
         }
         else {
-            res.status(401).send({success: false, msg: "Authentication failed."})
+            res.status(401).send({success: false, msg: "Authentication failed."});
         }
     }
 });
+
+router.route('/movies')
+    .get(function (req, res) {
+        res = res.status(200);
+        if(req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'));
+        }
+        let o = getJSONObjectForMovieRequirement(req);
+        o.msg = 'GET movies';
+        res.json(o);
+    })
+    .post(function (req, res) {
+        res = res.status(200);
+        if(req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'));
+        }
+        let o = getJSONObjectForMovieRequirement(req);
+        o.msg = 'movie saved';
+        res.json(o);
+    })
+    .delete(authController.isAuthenticated, function(req, res) {
+        res = res.status(200);
+        if(req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'));
+        }
+        let o = getJSONObjectForMovieRequirement(req);
+        o.msg = 'Movie deleted';
+        res.json(o);
+    });
 
 app.use('/', router);
 app.listen(process.env.PORT || 8000)

@@ -3,6 +3,7 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var passport = require('passport');
 var authController = require('./auth');
+var jwtController = require('./auth_jwt');
 var db = require('./db')();
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
@@ -93,7 +94,17 @@ router.route('/movies')
         let o = getJSONObjectForMovieRequirement(req);
         o.msg = 'Movie deleted';
         res.json(o);
+    })
+    .put(jwtController.isAuthenticated, function(req, res) {
+        res = res.status(200);
+        if(req.get('Content-Type')) {
+            res = res.type(req.get('Content-Type'));
+        }
+        let o = getJSONObjectForMovieRequirement(req);
+        o.msg = 'Movie updated';
+        res.json(o);
     });
+
 
 app.use('/', router);
 app.listen(process.env.PORT || 8000)

@@ -48,7 +48,7 @@ router.post('/signin', function (req, res) {
             res.send(err);
         }
 
-        user.comparePassword(userNew.password, function(isMatch) {
+        userNew.comparePassword(userNew.password, function(isMatch) {
             if (isMatch) {
                 var userToken = { id: user.id, username: user.username };
                 var token = jwt.sign(userToken, process.env.SECRET_KEY);

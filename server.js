@@ -65,8 +65,8 @@ router.post('/movies', function(req, res) {
     if(!req.body) {
         res.send({success: false, msg:'No body.'});
     }
-    else if (!authJwtController.isAuthenticated) {
-        res.status(401).send({success: false, msg: 'Authentication failed.'});
+    else if (!authJwtController.isAuthenticated(req, res)) {
+        //empty
     }
     else if (!req.body.title || !req.body.releaseYear || !req.body.genre || !req.body.actors) {
         res.send({success: false, msg: 'Required field missing.'});
@@ -109,8 +109,8 @@ router.put('/movies/:id', function(req, res) {
     if(!req.body) {
         res.send({success: false, msg:'No body.'});
     }
-    else if (!authJwtController.isAuthenticated) {
-        res.status(401).send({success: false, msg: 'Authentication failed.'});
+    else if (!authJwtController.isAuthenticated(req, res)) {
+        //empty
     }
     else if (!req.body.title || !req.body.releaseYear || !req.body.genre || !req.body.actors) {
         res.send({success: false, msg: 'Required field missing.'});
@@ -158,8 +158,8 @@ router.put('/movies/:id', function(req, res) {
 });
 
 router.get('/movies', function(req, res) {
-    if(!authJwtController.isAuthenticated) {
-        res.status(401).send({success: false, msg: 'Authentication failed.'});
+    if(!authJwtController.isAuthenticated(req, res)) {
+        //empty
     }
     else {
         Movie.find(function(err, movies) {
@@ -174,8 +174,8 @@ router.get('/movies', function(req, res) {
 });
 
 router.get('/movies/:id', function(req, res) {
-    if(!authJwtController.isAuthenticated) {
-        res.status(401).send({success: false, msg: 'Authentication failed.'});
+    if(!authJwtController.isAuthenticated(req, res)) {
+        //empty
     }
     else {
         Movie.findOne({_id: req.params.id}, function(err, movie) {
@@ -190,8 +190,8 @@ router.get('/movies/:id', function(req, res) {
 });
 
 router.delete('/movies/:id', function(req, res) {
-    if(!authJwtController.isAuthenticated) {
-        res.status(401).send({success: false, msg: 'Authentication failed.'});
+    if(!authJwtController.isAuthenticated(req, res)) {
+        //empty
     }
     else {
         Movie.deleteOne({_id: req.params.id}, function(err){

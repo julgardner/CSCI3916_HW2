@@ -43,14 +43,14 @@ router.post('/signin', function (req, res) {
     userNew.username = req.body.username;
     userNew.password = req.body.password;
 
-    User.findOne({ username: userNew.username }).select('name username password').exec(function(err, user) {
+    User.findOne({ username: userNew.username }).select('name username password').exec(function(err, userdoc) {
         if (err) {
             res.send(err);
         }
 
-        user.comparePassword(userNew.password, function(isMatch) {
+        userdoc.comparePassword(userNew.password, function(isMatch) {
             if (isMatch) {
-                var userToken = { id: user.id, username: user.username };
+                var userToken = { id: userdoc.id, username: user.username };
                 var token = jwt.sign(userToken, process.env.SECRET_KEY);
                 res.json ({success: true, token: 'JWT ' + token});
             }

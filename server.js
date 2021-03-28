@@ -50,7 +50,7 @@ router.post('/signin', function (req, res) {
 
         userdoc.comparePassword(userNew.password, function(isMatch) {
             if (isMatch) {
-                var userToken = { id: userdoc.id, username: user.username };
+                var userToken = { id: userdoc.id, username: userdoc.username };
                 var token = jwt.sign(userToken, process.env.SECRET_KEY);
                 res.json ({success: true, token: 'JWT ' + token});
             }
